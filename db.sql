@@ -25,3 +25,9 @@ database theak kono specific book delete korar jnno
 
 DELETE FROM book
 WHERE id
+
+database theak kono specific book update korar jnno
+
+UPDATE book
+SET name='Himu Somogro' description="This is amazing book author by humaiyun ahmed"
+WHERE id;

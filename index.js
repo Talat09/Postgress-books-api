@@ -67,14 +67,64 @@ app.delete("/books/:id", async (req, res) => {
 });
 
 //  PUT /books/:id --> Update a book
+// app.put("/books/:id", async (req, res) => {
+//   try {
+//     const { id } = req.params;
+
+//     const { name, description, image } = req.body;
+//     const updatedBook = await pool.query(
+//       "UPDATE book SET name=$1, description=$2, image=$3 WHERE id=$4 RETURNING *",
+//       [name, description, image, id]
+//     );
+//     res.status(200).json({ message: `Update a book`, data: updatedBook.rows });
+//   } catch (error) {
+//     res.json({ error: error.message });
+//   }
+// });
+
+//chat gpt put books
 app.put("/books/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    const { name, description, image } = req.body;
 
-    const { name, description } = req.body;
-    res.status(200).json({ message: `Update a book: ${name},${description}` });
+    // Initialize an array to hold the SET clause parts
+    const setClauseParts = [];
+    const values = [];
+
+    // Construct the SET clause parts based on provided fields
+    if (name !== undefined) {
+      setClauseParts.push(`name=$${values.length + 1}`);
+      values.push(name);
+    }
+    if (description !== undefined) {
+      setClauseParts.push(`description=$${values.length + 1}`);
+      values.push(description);
+    }
+    if (image !== undefined) {
+      setClauseParts.push(`image=$${values.length + 1}`);
+      values.push(image);
+    }
+
+    // Return early if no fields are provided for update
+    if (setClauseParts.length === 0) {
+      return res.status(400).json({ error: "No fields provided for update." });
+    }
+
+    // Construct the complete update query
+    const setClause = setClauseParts.join(", ");
+    values.push(id);
+    const updateQuery = `UPDATE book SET ${setClause} WHERE id=$${values.length} RETURNING *`;
+
+    // Perform the update operation on the database using the pool query
+    const updatedBook = await pool.query(updateQuery, values);
+
+    res
+      .status(200)
+      .json({ message: `Book updated successfully`, data: updatedBook.rows });
   } catch (error) {
-    res.json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
+
 //CRUD -> create ,Read , update , Delete using postgresSql
