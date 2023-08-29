@@ -20,3 +20,8 @@ database theak kono specific book get korar jnno
 SELECT *
 FROM book
 WHERE id
+
+database theak kono specific book delete korar jnno
+
+DELETE FROM book
+WHERE id
