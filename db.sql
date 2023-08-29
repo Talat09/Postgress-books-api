@@ -14,3 +14,9 @@ database theak kono kichu read korar jnno:
 
 SELECT *
 FROM book;
+
+database theak kono specific book get korar jnno
+
+SELECT *
+FROM book
+WHERE id
