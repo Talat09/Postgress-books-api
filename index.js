@@ -128,3 +128,24 @@ app.put("/books/:id", async (req, res) => {
 });
 
 //CRUD -> create ,Read , update , Delete using postgresSql
+// Search books by name
+app.get("/search", async (req, res) => {
+  try {
+    const { name } = req.query;
+    if (!name) {
+      return res
+        .status(400)
+        .json({ error: "Please provide a book name to search." });
+    }
+
+    const searchResults = await pool.query(
+      "SELECT * FROM book WHERE LOWER(name) LIKE $1",
+      [`%${name.toLowerCase()}%`]
+    );
+    res
+      .status(200)
+      .json({ message: "Search results", data: searchResults.rows });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
